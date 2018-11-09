@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
 		uf->_union_Node(p, q);
 		cout << p << " " << q << endl;
 	}
-	cout << uf->_getCount() << "components" << endl;
+	cout << uf->_getCount() << "components11" << endl;
 
 
 	system("pause");
