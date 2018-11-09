@@ -6,12 +6,13 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-	if (argc == 1)
+	ifstream f("tinyUF.txt");
+	if (!f.is_open())
 	{
-		cout << "missing parameters" << endl;
-		return -1; 
+		cout << "open file failed!" << endl;
+		system("pause");
+		return -1;
 	}
-	ifstream f(argv[1]);
 
 	int N = 0;
 	string tmp;
