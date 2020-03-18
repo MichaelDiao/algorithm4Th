@@ -14,7 +14,7 @@ List::List(int length){
     _capacity = 2*_length;
 }
 
-virtual ~List(){
+List::~List(){
     delete[] this->_pdata;
     _pdata = nullptr;
     _length = 0;
@@ -29,7 +29,7 @@ virtual ~List(){
 *
 * @return: bool, true is empty, or not empty
 */
-bool ListEmpty() const
+bool List::ListEmpty() const
 {
     return this->_length==0 ? true : false;
 }
@@ -41,9 +41,9 @@ bool ListEmpty() const
 *
 * @return: void
 */
-void ClearList()
+void List::ClearList()
 {
-    for_each(_pdata, _pdata+_length, [](int& ele){ele=0;});
+    std::for_each(_pdata, _pdata+_length, [](int& ele){ele=0;});
 }
 
 
@@ -54,7 +54,7 @@ void ClearList()
 *
 * @return: ElemType
 */
-ElemType GetElem(int index) const
+ElemType List::GetElem(int index) const
 {
     if(index > _length || index < 0){
         std::cerr << "out of range: " << index << std::endl;
@@ -71,7 +71,7 @@ ElemType GetElem(int index) const
 *
 * @return: int
 */
-int FindElem(ElemType elem) const
+int List::FindElem(ElemType elem) const
 {
     for(int i=0; i<_length; ++i){
         if(elem == _pdata[i]){
@@ -89,7 +89,7 @@ int FindElem(ElemType elem) const
 *       elem: 要插入的元素值
 * @return: bool
 */
-bool ListInsert(int index, ElemType elem)
+bool List::ListInsert(int index, ElemType elem)
 {
     if(index > _capacity || index < 0){
         return false;
@@ -110,4 +110,19 @@ bool ListInsert(int index, ElemType elem)
     _pdata[index] = elem;
 
     return true;
+}
+
+/**
+* @brief: brief
+*
+* @param: 
+*
+* @return: ElemType
+*/
+ElemType List::ListDelete(int index)
+{
+    if(index > _capacity || index < 0){
+        return -1;
+    }
+    
 }
