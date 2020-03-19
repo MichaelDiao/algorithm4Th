@@ -1,17 +1,21 @@
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 #include "list.h"
 
 List::List(){
     _pdata = new ElemType[MAXSIZE];
-    _length = MAXSIZE;
+    _length = 0;
     _capacity = MAXSIZE;
 }
 
-List::List(int length){
+List::List(const ElemType arr[], int length){
     _pdata = new ElemType[length];
     _length = length;
     _capacity = 2*_length;
+    for(int i=0; i<length; ++i){
+        _pdata[i] = arr[i];
+    }
 }
 
 List::~List(){
@@ -23,10 +27,23 @@ List::~List(){
 
 
 /**
-* @brief: 判断列表是否为空
-*
+* @brief: 使用下标的方式访问数组
 * @param: 
-*
+* @return: 当前索引的val
+* @error: 如果索引非法，则返回0位置的数据*/
+ElemType& List::operator[](int index)const{
+    if(index > _length || index < 0){
+        std::cerr << "index out of range!" << std::endl;
+        return _pdata[0];
+    }
+
+    return _pdata[index];
+}
+
+
+/**
+* @brief: 判断列表是否为空
+* @param: 
 * @return: bool, true is empty, or not empty
 */
 bool List::ListEmpty() const
@@ -36,9 +53,7 @@ bool List::ListEmpty() const
 
 /**
 * @brief: brief
-*
 * @param: 
-*
 * @return: void
 */
 void List::ClearList()
@@ -49,9 +64,7 @@ void List::ClearList()
 
 /**
 * @brief: brief
-*
 * @param: 
-*
 * @return: ElemType
 */
 ElemType List::GetElem(int index) const
@@ -66,9 +79,7 @@ ElemType List::GetElem(int index) const
 
 /**
 * @brief: brief
-*
 * @param: 
-*
 * @return: int
 */
 int List::FindElem(ElemType elem) const
@@ -114,15 +125,66 @@ bool List::ListInsert(int index, ElemType elem)
 
 /**
 * @brief: brief
-*
 * @param: 
-*
 * @return: ElemType
 */
 ElemType List::ListDelete(int index)
 {
-    if(index > _capacity || index < 0){
-        return -1;
+    if(index > _length || index < 0){
+        return INT_MIN;
     }
-    
+
+    ElemType val = _pdata[index];
+    for(int i=index; i<_length-i; --i){
+        _pdata[i] = _pdata[i+1];
+    }
+
+    --_length;
+
+    return val;
 }
+
+/**
+* @brief: brief
+* @param: 
+* @return: int
+*/
+int List::GetLength() const
+{
+    return _length;
+}
+
+/**
+* @brief: brief
+* @param: 
+* @return: int
+*/
+int List::GetCapacity() const
+{
+    return _capacity;
+}
+
+
+/**
+* @brief: 两个线性表取交集
+* @param: 
+* @return: bool
+*/
+bool List::ListUnion(const List& l)
+{
+    if(l.ListEmpty())
+        return true;
+
+    int len = l.GetLength();
+    for(int i=0; i<len; ++i){
+        if(this->FindElem(l[i]) == -1){
+            if(!ListInsert(_length-1, l[i])){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+

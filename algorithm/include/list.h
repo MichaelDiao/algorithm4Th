@@ -8,6 +8,8 @@
 * Created:          03/17/20 
 * Description:     线性表的相关操作 
 *****************************************************************************/
+#include <limits.h>
+#include <cstring>
 #define MAXSIZE 20 //存储空间初始分配量
 
 typedef int ElemType; //元素类型
@@ -23,8 +25,9 @@ private:
 
 public:
     List();
-    List(int length);
+    List(const ElemType arr[], int length);
     virtual ~List();
+    ElemType& operator[](int vindex)const;
     bool ListEmpty() const;
     void ClearList();
     ElemType GetElem(int index) const;
@@ -32,6 +35,7 @@ public:
     bool ListInsert(int index, ElemType elem);
     ElemType ListDelete(int index);
     int GetLength() const;
+    int GetCapacity() const;
     bool ListUnion(const List& l);
 };
 
