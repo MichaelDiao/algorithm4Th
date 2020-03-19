@@ -373,3 +373,6 @@ ASALocalRun/
 *.vcxproj
 *.filters
 *.vsxproj.user
+
+.build/*
+.bin/*
