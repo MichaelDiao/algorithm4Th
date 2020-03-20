@@ -1,0 +1,153 @@
+#!/bin/bash
+
+function clean(){
+    rm -rf build/*
+    rm bin/*
+    echo "clean all"
+}
+
+function build(){
+    echo -e "\033[32m start make...\033[0m" 
+    # echo "start make..."
+    cd build
+    if [ "$1" == "clean" ]; then
+        make clean
+    fi
+    make
+    make_res=$?
+    if [ ${make_res} -ne 0 ];then
+        echo -e "\033[31m make failed. \033[0m" 
+        return ${make_res}
+    fi
+
+    echo -e "\033[32m make all done with ${make_res} \033[0m" 
+    cd ..
+    return ${make_res}
+}
+
+function all_build(){
+    echo -e "\033[32m start building... \033[0m" 
+    cd build
+    cmake ..
+    res=$?
+    echo "cmake res: $res."
+    if [ ${res} -ne 0 ]; then
+        echo "cmake failed."
+        return ${res}
+    else
+        echo -e "\033[32m cmake done with ${res} \033[0m" 
+    fi
+    echo -e "\n\n"
+
+    build
+    res=$?
+    if [ ${res} -ne 0 ]; then
+        return ${res}
+    else
+        echo -e "\033[32m make done with ${res} \033[0m" 
+    fi
+    return ${res}
+}
+
+function run(){
+    if [ 1 == $# ]; then
+        echo -e "\033[32m \n\nstart running... \033[0m" 
+        ./bin/$1
+    else
+        echo "para error!"
+        echo "Useage: ./compile run(r) executable_file_name"
+    fi
+}
+
+
+function show_help(){
+    echo "Useage:"
+    echo "  ./build.sh [ make(m) | remake(rm) | run(r) {exec_file_name}| clean(c) | rebuild(rb) | rebuildAndRun(rbr) {exec_file_name}]"
+    echo "Attention: "
+    echo "  run:    means that make firstly and run sencdonly."
+    echo "  make:  for make."
+    echo "  remake:  for make clean and make."
+    echo "  rebuild: clean all of build/ , lib/ and bin/*, and cmake and make."
+    echo "  rebuildAndRun: run something after rebuild."
+    echo "  run: run something after make clean and make."
+}
+
+
+
+function parse(){
+    if [ 0 == $# ]; then
+        show_help
+    elif [ 1 == $# ]; then
+        if [ "make" == $1 -o "m" == $1 ]; then
+            build 
+            res=$?
+            if [ ${res} -ne 0 ]; then
+                return 2;
+            fi
+        elif [ "remake" == $1 -o "rm" == $1 ]; then
+            build "clean"
+            res=$?
+            if [ ${res} -ne 0 ]; then
+                return 2;
+            fi
+        elif [ "clean" == $1 -o "c" == $1 ]; then
+            clean
+        elif [ "rebuild" == $1 -o "rb" == $1 ]; then
+            clean
+            all_build
+            res=$?
+            echo "all build res: $res."
+            if [ ${res} -ne 0 ]; then
+                return 3;
+            fi
+        elif [ "run" == $1 -o "r" == $1 ]; then
+            return 5;
+        else
+            return 4
+        fi
+    elif [ 2 == $# ]; then
+        if [ "run" == $1 -o "r" == $1 ]; then
+            build
+            res=$?
+            # echo "after build $res."
+            if [ "$res" -ne "0" ];then
+                # echo "stop run."
+                return 2
+            else
+                run $2
+            fi
+        elif [ "rebuildAndRun" == $1 -o "rbr" == $1 ]; then
+            clean
+            all_build
+            res=$?
+            echo "all build res: $res."
+            if [ ${res} -ne 0 ]; then
+                return 3;
+            else
+                run $2
+            fi
+        fi
+    else
+        return 1
+    fi
+    
+    return 0
+}
+
+
+
+parse $*
+res=$?
+if [ ${res} == 1 ]; then
+    echo -e "\033[31m too much parameters, please ./$1 \033[0m" 
+elif [ ${res} == 2 ]; then
+    echo -e "\033[31m stop run. \033[0m" 
+elif [ ${res} == 3 ]; then
+    echo -e "\033[31m all building failed. \033[0m" 
+elif [ ${res} == 4 ]; then
+    echo -e "\033[31m two parameters, but para type error, it must be one of run, build, rebuild, rebuildAndRun. \033[0m" 
+elif [ ${res} == 5 ]; then
+    echo -e "\033[31m lack binary file name. eg: $0 r list_test \033[0m" 
+else
+    echo -e "\033[32m OK! \033[0m" 
+fi
