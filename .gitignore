@@ -29,3 +29,5 @@
 tags
 *.swp
 
+!.gitkeep
+
