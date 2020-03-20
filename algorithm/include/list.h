@@ -26,6 +26,7 @@ private:
 public:
     List();
     List(const ElemType arr[], int length);
+    List(const List& l);
     virtual ~List();
     ElemType& operator[](int vindex)const;
     bool ListEmpty() const;

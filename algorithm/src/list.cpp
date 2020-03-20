@@ -4,17 +4,32 @@
 #include "list.h"
 
 List::List(){
-    _pdata = new ElemType[MAXSIZE];
+    _pdata = nullptr;
     _length = 0;
-    _capacity = MAXSIZE;
+    _capacity = 0;
 }
 
 List::List(const ElemType arr[], int length){
-    _pdata = new ElemType[length];
     _length = length;
     _capacity = 2*_length;
+    _pdata = new ElemType[_capacity];
     for(int i=0; i<length; ++i){
         _pdata[i] = arr[i];
+    }
+}
+
+List::List(const List& l){
+    if(l.GetCapacity() == 0){
+        _pdata = nullptr;
+        _length = 0;
+        _capacity = 0;
+    }else{
+        _capacity = l.GetCapacity();
+        _length = l.GetLength();
+        _pdata = new ElemType[_capacity];
+        for(int i=0; i<_length; ++i){
+            _pdata[i] = l[i];
+        }
     }
 }
 
@@ -58,7 +73,12 @@ bool List::ListEmpty() const
 */
 void List::ClearList()
 {
-    std::for_each(_pdata, _pdata+_length, [](int& ele){ele=0;});
+    _length = 0;
+    if(_capacity > MAXSIZE){
+        delete[] _pdata;
+        _pdata = new ElemType[MAXSIZE];
+        _capacity = MAXSIZE;
+    }
 }
 
 
@@ -69,7 +89,7 @@ void List::ClearList()
 */
 ElemType List::GetElem(int index) const
 {
-    if(index > _length || index < 0){
+    if(index >= _length || index < 0){
         std::cerr << "out of range: " << index << std::endl;
         return -1;
     }
@@ -94,7 +114,7 @@ int List::FindElem(ElemType elem) const
 
 
 /**
-* @brief: 在元素序号为index的位置插入元素elem
+* @brief: 在元素序号为index的位置插入元素elem, 当容量不够时,进行以2倍速率扩容.
 * @param:  
 *       index: 想要插入的元素的下标
 *       elem: 要插入的元素值
@@ -102,17 +122,18 @@ int List::FindElem(ElemType elem) const
 */
 bool List::ListInsert(int index, ElemType elem)
 {
-    if(index > _capacity || index < 0){
+    if(index > _length || index < 0){
         return false;
     }
 
     // capacity expansion
-    if(_length / float(_capacity) >= 0.75){
-        _capacity *= 2;
+    if(_capacity == 0 || _length / float(_capacity) >= 0.75){
+        _capacity = _capacity==0 ? MAXSIZE : _capacity*2;
         ElemType* tmp = new ElemType[_capacity];
-        memcpy(tmp, _pdata, _length);
+        memcpy(tmp, _pdata, _length*sizeof(ElemType));
         delete[] _pdata;
         _pdata = tmp;
+        std::cout << "expand capacity." << std::endl;
     }
 
     for(int i=_length-1; i>=index; --i){
@@ -120,26 +141,37 @@ bool List::ListInsert(int index, ElemType elem)
     }
     _pdata[index] = elem;
 
+    ++_length;
+
     return true;
 }
 
 /**
-* @brief: brief
+* @brief: 按索引删除元素,当使用率小于0.25时且容量大于MAXSIZE时,回收部分内存.
 * @param: 
 * @return: ElemType
 */
 ElemType List::ListDelete(int index)
 {
-    if(index > _length || index < 0){
+    if(index >= _length || index < 0){
+        std::cerr << "index out of range: " << index << std::endl;
         return INT_MIN;
     }
 
     ElemType val = _pdata[index];
-    for(int i=index; i<_length-i; --i){
+    for(int i=index; i<_length-1; ++i){
         _pdata[i] = _pdata[i+1];
     }
 
     --_length;
+    if(_capacity > MAXSIZE && _length/float(_capacity) < 0.25){
+        _capacity /= 2;
+        ElemType* tmp = new ElemType[_capacity];
+        memcpy(tmp, _pdata, _length*sizeof(ElemType));
+        delete[] _pdata;
+        _pdata = tmp;
+        std::cout << "reduce the capacity." << std::endl;
+    }
 
     return val;
 }
@@ -178,7 +210,7 @@ bool List::ListUnion(const List& l)
     int len = l.GetLength();
     for(int i=0; i<len; ++i){
         if(this->FindElem(l[i]) == -1){
-            if(!ListInsert(_length-1, l[i])){
+            if(!ListInsert(_length, l[i])){
                 return false;
             }
         }
