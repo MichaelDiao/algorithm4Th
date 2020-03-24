@@ -5,10 +5,7 @@
 
 using namespace std;
 
-
-int main(int argc, char *argv[])
-{
-    clock_t start, end; 
+void list_test(){
     int arr[10] = {5, 18, 78, 72, 781, 274, 63, 82, 298, 671};
     int arr2[7] = {72, 81, 274, 77, 82, 61, 1927};
     show_arr(arr, 10);
@@ -163,5 +160,76 @@ int main(int argc, char *argv[])
     cout << endl;
 
     cout << "all done" << endl;
+
+}
+
+void singleLinkListTest(){
+    SingleLinkList sll1;
+    sll1.insertHead(1, 10);
+    Node* node = new Node(5);
+    sll1.insertNodeHead(2, node);
+    cout << "len: " << sll1.get_length() << endl;
+    if(sll1.insertHead(3, 12)){
+        cout << "insert success" << endl;
+    }else{
+        cout << "insert failed" << endl;
+    }
+    node = new Node(8);
+    sll1.insertNodeHead(5, node);
+
+    sll1.show();
+    ElemType ele = 0;
+    if(sll1.remove(3, ele)){
+        cout << "remove success, ele=" << ele << endl;
+    }else{
+        cout << "remove failed" << endl;
+    }
+    sll1.show();
+    
+    if(sll1.get(0, ele)){
+        cout << "get success, ele=" << ele << endl;
+    }else{
+        cout << "get failed" << endl;
+    }
+
+    if(sll1.find(10)){
+        cout << "find 12 success " << endl;
+    }else{
+        cout << "find 12 failed" << endl;
+    }
+    node = nullptr;
+    if(sll1.find(11, node)){
+        cout << "find 12 success, next: " << node->_next << ", data:" << node->_data << endl;
+    }else{
+        cout << "find 12 failed" << endl;
+    }
+    cout << "------------" << endl;
+    SingleLinkList sll2(10);
+    sll2.show();
+    sll2.update(0, 1000);
+    sll2.update(10, 2000);
+    sll2.update(1, 3000);
+    sll2.update(4, 5000);
+    cout << "len: " << sll2.get_length() << endl;
+    node = nullptr;
+    sll2.get_head(node);
+    if(node){
+        cout << "1st data: " << node->_next->_data << endl;
+    }else{
+        cout << "get head failed." << endl;
+    }
+    sll2.show();
+    sll2.clear();
+    sll2.show();
+
+}
+
+int main(int argc, char *argv[])
+{
+    cout << "starting test: " << endl;
+    singleLinkListTest();
+
+    cout << "end test! " << endl;
+
     return 0;
 }

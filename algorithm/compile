@@ -145,7 +145,7 @@ elif [ ${res} == 2 ]; then
 elif [ ${res} == 3 ]; then
     echo -e "\033[31m all building failed. \033[0m" 
 elif [ ${res} == 4 ]; then
-    echo -e "\033[31m two parameters, but para type error, it must be one of run, build, rebuild, rebuildAndRun. \033[0m" 
+    echo -e "\033[31m two parameters, but para type error, it must be one of run(r), make(m), remake(rm), rebuildAndRun(rbr). \033[0m" 
 elif [ ${res} == 5 ]; then
     echo -e "\033[31m lack binary file name. eg: $0 r list_test \033[0m" 
 else
