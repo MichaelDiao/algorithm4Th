@@ -256,12 +256,24 @@ Node* getEntryNodeOfLoop_fastslow(Node* head){
 * @comment:  哈希缓存法
 *****************************************************************/
 Node* getEntryNodeOfLoop_hash(Node* head){
+    map<Node*, int> addr;
+    Node* cur = head;
+    while(cur->_next){
+        cur = cur->_next;
+        if(addr.find(cur) == addr.end()){
+            addr[cur] = 1;
+        }else{
+            return cur;
+        }
+    }
     
     return nullptr;
 }
 
 //判断链表是否有环，若有，则返回环的入口
 //两种方案：快慢指针和哈希缓存，哈希缓存容易理解，思路简单
+//哈希缓存法速度快,但是占用内存大,因为需要一个与链表同等长度的map
+//快慢指针 速度慢,因为需要遍历多次链表,但占用内存小,不需要额外的内存空间
 void getEntryNodeOfLoop_test(){
     SingleLinkList sl(10);
     sl.show();
@@ -274,7 +286,8 @@ void getEntryNodeOfLoop_test(){
     tailNode->_next = crossNode;
     cout << "tail next data: " << tailNode->_next->_data << endl;
 
-    Node* entry = getEntryNodeOfLoop_fastslow(head);
+    /* Node* entry = getEntryNodeOfLoop_fastslow(head); */
+    Node* entry = getEntryNodeOfLoop_hash(head);
     if(entry){
         cout << "loop exsist: data=" << entry->_data << endl;
     }else{
