@@ -7,6 +7,7 @@
 
 #include<iostream>
 #include <ctime>
+#include <unistd.h>
 #include <map>
 #include "list.h"
 
@@ -300,6 +301,172 @@ void getEntryNodeOfLoop_test(){
 
 }
 
+
+////////////////////有环链表环长度
+int getLenOfLoop(Node* head){
+    Node* fast = head;
+    Node* slow = head;
+    int len = 0;
+
+    while(fast && fast->_next){
+        fast = fast->_next->_next;
+        slow = slow->_next;
+        if(slow == fast){
+            break;
+        }
+    }
+
+    while(fast && fast->_next){
+        fast = fast->_next->_next;
+        slow = slow->_next;
+        ++len;
+        if(slow == fast){
+            break;
+        }
+
+    }
+
+
+    return len;
+}
+
+
+//计算有环链表的环长度
+void getLenOfLoop_test(){
+    SingleLinkList sl(10);
+    sl.show();
+    Node* head = nullptr;
+    sl.get_head(head);
+
+    //构造一个有环链表
+    Node* crossNode = getNodeFromBottom3(head, 4);
+    Node* tailNode = getNodeFromBottom3(head, 1);
+    tailNode->_next = crossNode;
+    cout << "tail next data: " << tailNode->_next->_data << endl;
+
+    int len = getLenOfLoop(head);
+    if(len > 0){
+        cout << "loop exsist: len=" << len << endl;
+    }else{
+        cout << "loop do not exsist." << endl;
+    }
+
+
+    //测试完成后，需要手动把这个环打开，否则析构会出问题
+    tailNode->_next = nullptr;
+
+}
+
+//0--------------------链表合并
+void mergeLinkList(Node* &head1, Node* &head2, Node* &newHead){
+    if(!head1){
+        newHead->_next = head2->_next;
+        head2->_next = nullptr;
+    }
+    if(!head2){
+        newHead->_next = head1->_next;
+        head1->_next = nullptr;
+    }
+
+    Node* cur1 = head1->_next;
+    Node* cur2 = head2->_next;
+    Node* new_cur = nullptr;
+
+    while(cur1 && cur2){
+        if(cur1->_data > cur2->_data){
+            if(!newHead->_next){
+                newHead->_next = cur2;
+                new_cur = cur2;
+            }else{
+                new_cur->_next = cur2;
+                new_cur = cur2;
+            }
+            cur2 = cur2->_next;
+            head2->_next = cur2;
+        }else{
+            if(!newHead->_next){
+                newHead->_next = cur1;
+                new_cur = cur1;
+            }else{
+                new_cur->_next = cur1;
+                new_cur = cur1;
+            }
+            cur1 = cur1->_next;
+            head1->_next = cur1;
+        }
+    }
+    if(!cur1){
+        new_cur->_next = cur2;
+        head2->_next = nullptr;
+    }else if(!cur2){
+        new_cur->_next = cur1;
+        head1->_next = nullptr;
+    }
+}
+
+//链表合并 递归法
+Node* mergeLinkList_recursion(Node* &head1, Node* &head2){
+    if(!head1){
+        Node* tmp = head2->_next;
+        head2->_next = nullptr;
+        return tmp;
+    }else if(!head2){
+        Node* tmp = head1->_next;
+        head1->_next = nullptr;
+        return tmp;
+    }else{
+        Node* cur1 = head1->_next;
+        Node* cur2 = head2->_next;
+        Node* head = nullptr;
+        Node* cur = nullptr;
+        if(cur1->_data > cur2->_data){
+            head->_next = cur2;
+            cur = cur2;
+            cur2 = cur2->_next;
+            head2->_next = cur2;
+        }else{
+            head->_next = cur1;
+            cur = cur1;
+            cur1 = cur1->_next;
+            head1->_next = cur1;
+        }
+
+        cur->_next = mergeLinkList_recursion(head1, head2);
+
+        return head;
+    }
+
+    return nullptr;
+}
+
+//两个链表合并
+void mergeLinkList_test(){
+    SingleLinkList sl(3);
+    sl.show();
+    Node* head1 = nullptr;
+    sl.get_head(head1);
+
+    sleep(2);
+    SingleLinkList sl2(2);
+    sl2.show();
+    Node* head2 = nullptr;
+    sl2.get_head(head2);
+
+    SingleLinkList sl3;
+    sl3.show();
+    Node* head3 = nullptr;
+    sl3.get_head(head3);
+
+    /* mergeLinkList(head1, head2, head3); */
+    head3 = mergeLinkList_recursion(head1, head2);
+    cout << endl << "result: " << endl;
+    sl.show();
+    sl2.show();
+    sl3.show();
+
+
+}
+
 int main(int argc, char *argv[])
 {
     //链表获取倒数第N个节点
@@ -309,8 +476,13 @@ int main(int argc, char *argv[])
     /* isExsistLoop_test(); */
 
     //链表是否存在环，若存在找环的入口
-    getEntryNodeOfLoop_test();
+    /* getEntryNodeOfLoop_test(); */
 
+    //计算有环链表环长度
+    /* getLenOfLoop_test(); */
+
+    //合并两个链表
+    mergeLinkList_test();
 
     return 0;
 }
