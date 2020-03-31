@@ -406,32 +406,33 @@ void mergeLinkList(Node* &head1, Node* &head2, Node* &newHead){
 
 //链表合并 递归法
 Node* mergeLinkList_recursion(Node* &head1, Node* &head2){
-    if(!head1){
+    if(!head1->_next){
         Node* tmp = head2->_next;
         head2->_next = nullptr;
+        head2->_data = 0;
         return tmp;
-    }else if(!head2){
+    }else if(!head2->_next){
         Node* tmp = head1->_next;
         head1->_next = nullptr;
+        head1->_data = 0;
         return tmp;
     }else{
         Node* cur1 = head1->_next;
         Node* cur2 = head2->_next;
         Node* head = nullptr;
-        Node* cur = nullptr;
         if(cur1->_data > cur2->_data){
-            head->_next = cur2;
-            cur = cur2;
+            head = cur2;
             cur2 = cur2->_next;
             head2->_next = cur2;
+            --head2->_data;
         }else{
-            head->_next = cur1;
-            cur = cur1;
+            head = cur1;
             cur1 = cur1->_next;
             head1->_next = cur1;
+            --head1->_data;
         }
 
-        cur->_next = mergeLinkList_recursion(head1, head2);
+        head->_next = mergeLinkList_recursion(head1, head2);
 
         return head;
     }
@@ -458,7 +459,7 @@ void mergeLinkList_test(){
     sl3.get_head(head3);
 
     /* mergeLinkList(head1, head2, head3); */
-    head3 = mergeLinkList_recursion(head1, head2);
+    head3->_next = mergeLinkList_recursion(head1, head2);
     cout << endl << "result: " << endl;
     sl.show();
     sl2.show();
