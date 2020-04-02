@@ -9,6 +9,7 @@
 #include <ctime>
 #include <unistd.h>
 #include <map>
+#include <stack>
 #include "list.h"
 
 using namespace std;
@@ -468,6 +469,105 @@ void mergeLinkList_test(){
 
 }
 
+
+//---------------------------------------------
+//使用栈结构
+void printFromTailToHead_stack(Node* head){
+    Node* cur = head->_next;
+    std::stack<ElemType> data;
+
+    while(cur){
+        data.push(cur->_data);
+        cur = cur->_next;
+    }
+
+    std::cout << "reverse linklist: " << data.size() << std::endl;
+    size_t sz = data.size();
+    for(size_t i=0; i<sz; ++i){
+        if(data.empty()){
+            std::cout << "break" << std::endl;
+            break;
+        }
+        std::cout << data.top() << "\t";
+        data.pop();
+    }
+    std::cout << std::endl;
+    std::cout << "end" << std::endl;
+}
+
+
+//使用递归结构
+void printFromTailToHead_recursion(Node* node){
+    static int cnt = 0;
+    if(!node){
+        return;
+    }
+    cnt++;
+    printFromTailToHead_recursion(node->_next);
+    std::cout << node->_data << "\t";
+    if(--cnt == 0){
+        std::cout << std::endl;
+    }
+    return;
+}
+
+////从尾到头打印链表
+void printFromTailToHead_test(){
+    SingleLinkList s1(10);
+    s1.show();
+    Node* head = nullptr;
+    s1.get_head(head);
+    /* printFromTailToHead_stack(head); */
+    printFromTailToHead_recursion(head->_next);
+
+}
+
+
+//----------------------------------------
+//反转链表 三指针法
+void reverseLinkList_3pointers(Node* head){
+    //如果为空或者只有一个节点，则直接返回
+    if(!head){
+        return;
+    }
+    Node* pre = nullptr;
+    Node* cur = head->_next;
+
+    Node* next = nullptr;
+    while(cur){
+        next = cur->_next;
+        cur->_next = pre;
+        pre = cur;
+        head->_next = cur;
+        cur = next;
+    }
+}
+
+//反转链表 递归法
+Node* reverseLinkList_recursion(Node* head){
+    if(!head || !head->_next){
+        return head;
+    } 
+    Node* tail = reverseLinkList_recursion(head->_next);
+    head->_next->_next = head;
+    head->_next = nullptr;
+
+    return tail;
+}
+
+//反转链表
+void reverseLinkList_test(){
+    SingleLinkList s1(12);
+    s1.show();
+    Node* head = nullptr;
+    s1.get_head(head);
+    /* reverseLinkList_3pointers(head); */
+    head->_next = reverseLinkList_recursion(head->_next);
+    s1.show();
+}
+
+
+
 int main(int argc, char *argv[])
 {
     //链表获取倒数第N个节点
@@ -483,7 +583,13 @@ int main(int argc, char *argv[])
     /* getLenOfLoop_test(); */
 
     //合并两个链表
-    mergeLinkList_test();
+    /* mergeLinkList_test(); */
+
+    //从尾到头打印链表
+    /* printFromTailToHead_test(); */
+
+    //反转链表
+    reverseLinkList_test();
 
     return 0;
 }
