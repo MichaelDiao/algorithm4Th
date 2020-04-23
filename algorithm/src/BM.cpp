@@ -16,9 +16,13 @@ void buildBadCharArr(const std::string& patt, int* badCharArr){
         badCharArr[i] = len; 
     }
 
-    for (int i = 0; i < len; ++i) {
+    //注意这里是<len-1, 如果i<len,则i=len-1时，此时badCharArr[patt[i]] = 0, 根据
+    //坏字符规则，模式串匹配时，移动距离变成负数，导致模式串回退，这是不合理的
+    for (int i = 0; i < len - 1; ++i) {
         badCharArr[int(patt[i])] = len - 1 - i;
     }
+
+
     for (int i = 0; i < len; ++i) {
         if(i % 15 == 0){
             std::cout << std::endl;
@@ -134,7 +138,7 @@ int BoyerMoore(const std::string& pattern, const std::string& text) {
         }
         else
         {
-            j += MAX(badCharArr[text[i + j]] - (patt_len - 1 - i), good_suffix[i]);
+            j += MAX(int(badCharArr[int(text[i + j])]) - (patt_len - 1 - i), good_suffix[i]);
         }
     }
 
