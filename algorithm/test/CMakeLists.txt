@@ -12,3 +12,6 @@ target_link_libraries(kmp_test algorithm tools)
 
 add_executable(bm_test BM_test.cpp)
 target_link_libraries(bm_test algorithm tools)
+
+add_executable(graph_test graph_test.cpp)
+target_link_libraries(graph_test algorithm tools)
