@@ -98,6 +98,8 @@ get_python_inc(),
 './src',
 '-I',
 './test',
+'-I',
+'../',
 ]
 
 # Clang automatically sets the '-std=' flag to 'c++14' for MSVC 2015 or later,

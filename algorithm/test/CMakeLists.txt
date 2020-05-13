@@ -15,3 +15,6 @@ target_link_libraries(bm_test algorithm tools)
 
 add_executable(graph_test graph_test.cpp)
 target_link_libraries(graph_test algorithm tools)
+
+add_executable(search_test search_test.cpp)
+target_link_libraries(search_test algorithm tools)
