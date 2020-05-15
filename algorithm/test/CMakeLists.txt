@@ -18,3 +18,6 @@ target_link_libraries(graph_test algorithm tools)
 
 add_executable(search_test search_test.cpp)
 target_link_libraries(search_test algorithm tools)
+
+add_executable(binaryTreeSearch_test binaryTreeSearch_test.cpp)
+target_link_libraries(binaryTreeSearch_test algorithm tools)
